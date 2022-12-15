@@ -53,7 +53,7 @@ public class UserView extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tweetStrings.add(user.getDisplayName() + ": " + jTextField2.getText());
+                tweetStrings.add("(" + user.getLastUpdateTime() + ") " + user.getDisplayName() + ": " + jTextField2.getText());
                 AdminPanel.totalMessageCount++;
                 isMessagePositive(jTextField2.getText());
                 jTextField2.setText("");

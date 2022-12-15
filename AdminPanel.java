@@ -25,6 +25,8 @@ public class AdminPanel extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
@@ -63,6 +65,8 @@ public class AdminPanel extends javax.swing.JFrame {
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
+        jButton9 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -125,6 +129,18 @@ public class AdminPanel extends javax.swing.JFrame {
                 popUpFrame, "Total Number of Groups: " + user_groups.size()
             );
         });
+        jButton8.setText("Verify Users & Groups");
+        jButton8.addActionListener(e -> {
+            JOptionPane.showMessageDialog(
+                popUpFrame, validateIDs()
+            );
+        });
+        jButton9.setText("Last Updated User");
+        jButton9.addActionListener(e -> {
+            JOptionPane.showMessageDialog(
+                popUpFrame, "Last Updated User: " + findLastUpdatedUser()
+            );
+        });
 
         // Generated code using NetBeans Swing layout builder
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -145,6 +161,8 @@ public class AdminPanel extends javax.swing.JFrame {
                             .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                             .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
@@ -170,6 +188,8 @@ public class AdminPanel extends javax.swing.JFrame {
                             .addComponent(jTextField2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -209,6 +229,7 @@ public class AdminPanel extends javax.swing.JFrame {
         if (!users.containsKey(newUserName)) {
             User newUser = new User(newUserName);
             users.put(newUserName, newUser);
+            System.out.println("User " + newUserName + " was created at " + newUser.getCreationTime());
 
             DefaultMutableTreeNode selectedUser = (DefaultMutableTreeNode)jTree1.getSelectionPath().getLastPathComponent();
             selectedUser.add(new DefaultMutableTreeNode(jTextField1.getText(), false));
@@ -223,6 +244,7 @@ public class AdminPanel extends javax.swing.JFrame {
         if (!user_groups.containsKey(newUserGroupName)) {
             User_Group newUserGroup = new User_Group(newUserGroupName);
             user_groups.put(newUserGroupName, newUserGroup);
+            System.out.println("Group " + newUserGroupName + " was created at " + newUserGroup.getCreationTime());
             
             DefaultMutableTreeNode selectedUser = (DefaultMutableTreeNode)jTree1.getSelectionPath().getLastPathComponent();
             selectedUser.add(new DefaultMutableTreeNode(jTextField2.getText(), true));
@@ -239,5 +261,40 @@ public class AdminPanel extends javax.swing.JFrame {
 
     public HashMap<String, User_Group> getGroups() {
         return user_groups;
+    }
+
+    private String validateIDs() {
+        List<String> uniqueIDs = new ArrayList<String>();
+        for(String i : users.keySet()){
+            User testUser = users.get(i);
+            if(uniqueIDs.contains(testUser.getUnique_ID())){
+                return "Error " + testUser.getDisplayName() + "'s Unique ID is a duplicate";
+            }
+            else{
+                uniqueIDs.add(testUser.getUnique_ID());
+            }
+
+            if(testUser.getUnique_ID().contains(" ")){
+                return "Error " + testUser.getDisplayName() + "'s Unique ID contains a space";
+            }
+        }
+        return "All Users and Groups are valid";
+    }
+
+    private String findLastUpdatedUser() {
+        if(users.size() == 0){
+            return "There are 0 users";
+        }
+        else{
+            String lastUpdatedUsername = "";
+            long lastUpdateTime = 0;
+            for(String i : users.keySet()){
+                User testUser = users.get(i);
+                if(testUser.getLastUpdateTime() > lastUpdateTime){
+                    lastUpdatedUsername = testUser.getDisplayName();
+                }
+            }
+            return String.valueOf(lastUpdatedUsername);
+        }
     }
 }

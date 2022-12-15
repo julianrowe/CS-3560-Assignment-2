@@ -9,6 +9,9 @@ public class User extends Subject implements Observer, SysEntry {
     private List<String> messages;
     private List<User_Group> userGroupList;
     private Feed personalFeed;
+    private long creationTime;
+    private long lastUpdateTime;
+    // private Feed newsFeed;
     private List<String> newsFeed = new ArrayList<>(Arrays.asList());
     private List<String> myTweets = new ArrayList<>();
 
@@ -17,6 +20,9 @@ public class User extends Subject implements Observer, SysEntry {
         followers = new ArrayList<>();
         following = new ArrayList<>();
         personalFeed = new Feed();
+        creationTime = System.currentTimeMillis();
+        lastUpdateTime = creationTime;
+        // newsFeed = new Feed();
     }
 
     public void followUser(User user) {
@@ -40,10 +46,19 @@ public class User extends Subject implements Observer, SysEntry {
         return myTweets;
     }
 
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public long getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
     public void tweetMessage (String tweet){
         myTweets.add(tweet);
         newsFeed.add("-" + this.unique_ID + " : " + tweet);
         notifyObservers(tweet);
+        lastUpdateTime = System.currentTimeMillis();
     }
 
     @Override
@@ -66,5 +81,6 @@ public class User extends Subject implements Observer, SysEntry {
         if(subject instanceof User) {
             this.newsFeed.add("-" + ((User) subject).getUnique_ID() + " : " + tweet);
         }
+        lastUpdateTime = System.currentTimeMillis();
     }
 }

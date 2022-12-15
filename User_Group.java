@@ -5,6 +5,7 @@ public class User_Group implements SysEntry{
     private String unique_ID;
     private List<User> userList;
     private List<User_Group> userGroupList;
+    private long creationTime;
 
     public User_Group(String name, User... users) {
         userList = new ArrayList<>();
@@ -13,6 +14,7 @@ public class User_Group implements SysEntry{
             userList.add(user);
         }
         unique_ID = name;
+        creationTime = System.currentTimeMillis();
     }
 
     public void addMemeber(User user) {
@@ -42,5 +44,9 @@ public class User_Group implements SysEntry{
     @Override
     public String getUnique_ID() {
         return unique_ID;
+    }
+
+    public long getCreationTime() {
+        return creationTime;
     }
 }
